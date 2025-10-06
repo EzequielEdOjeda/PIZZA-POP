@@ -1,15 +1,15 @@
 # 🍕 PIZZA POP
 
-**PIZZA POP** es una plantilla web interactiva para un restaurante o delivery de pizzas, desarrollada con **HTML, CSS y JavaScript**.  
+Plantilla web interactiva para un restaurante o delivery de pizzas, desarrollada con **HTML, CSS y JavaScript**.  
 Incluye un sistema de **carrito**, **búsqueda de productos**, **categorías dinámicas** y **envío directo por WhatsApp**, con soporte para **Firebase Realtime Database**.
 
 ---
 
 ## 🚀 Características principales
 
-- 🍽️ **Menú dinámico** con categorías y paginación.  
+- 📋 **Menú dinámico** con categorías y paginación.  
 - 🔍 **Buscador en tiempo real** para filtrar productos.  
-- 🛒 **Carrito de compras** con conteo y cálculo automático.  
+- 🏡 **Carrito de compras** con conteo y cálculo automático.  
 - 💬 **Envío de pedido por WhatsApp** con mensaje preformateado.  
 - ☁️ **Integración con Firebase Realtime Database** para obtener productos desde la nube.  
 - 📱 **Diseño responsive** optimizado para móviles y tablets.
