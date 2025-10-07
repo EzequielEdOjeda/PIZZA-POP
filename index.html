@@ -1564,34 +1564,29 @@ function sendWhatsAppOrder() {
     const whatsappNumber = "543624031997";
     
     // 1. Encabezado del Ticket
-    let message = "==================================%0A";
-    message += "*🍕 MI PEDIDO PARA PIZZA POP 🍕*%0A";
-    message += "==================================%0A%0A";
+	let message = "*🍕 MI PEDIDO PARA PIZZA POP 🍕*%0A%0A"; // Dejamos dos saltos de línea al final
 
-    message += "*📦 DETALLE DE LA ORDEN:*%0A";
-    
-    // 2. Agregar productos
-    cart.forEach(item => {
-        const itemTotal = (item.price * item.qty).toFixed(2);
-        // Formato: [Nombre] x[Cantidad] -> Total
-        message += `• ${item.name} x${item.qty} -> $${itemTotal}%0A`;
-    });
-    
-    // 3. Separador y Total Final
-    const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    message += `%0A----------------------------------%0A`;
-    message += `💰 *TOTAL A PAGAR: $${total.toFixed(2)}*%0A`;
-    message += `----------------------------------%0A%0A`;
-    
-    // 4. Datos del Cliente
-    message += "*DATOS DE ENTREGA Y PAGO:*%0A";
-    message += `👤 Nombre: ${name}%0A`;
-    message += `📍 Dirección/Ubicación: ${address}%0A`;
-    message += `💳 Tipo de Pago: ${finalPaymentMethod}%0A`; 
-    
-    if (notes) {
-        message += `📝 Notas: ${notes}%0A`;
-    }
+	message += "*📦 DETALLE DE LA ORDEN:*%0A";
+		
+	// 2. Agregar productos
+	cart.forEach(item => {
+		const itemTotal = (item.price * item.qty).toFixed(2);
+		message += `• ${item.name} x${item.qty} -> $${itemTotal}%0A`;
+	});
+
+	// 3. Total Final
+	const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+	message += `%0A*💰 TOTAL A PAGAR: $${total.toFixed(2)}*%0A%0A`; // Dejamos dos saltos de línea al final
+
+	// 4. Datos del Cliente
+	message += "*DATOS DE ENTREGA Y PAGO:*%0A";
+	message += `👤 Nombre: ${name}%0A`;
+	message += `📍 Dirección/Ubicación: ${address}%0A`;
+	message += `💳 Tipo de Pago: ${finalPaymentMethod}%0A`;
+
+	if (notes) {
+		message += `📝 Notas: ${notes}%0A`;
+	}
 
     // Abrir WhatsApp
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
@@ -1648,5 +1643,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </script> 
 </body>
 </html>
+
 
 
