@@ -26,11 +26,11 @@ Incluye un sistema de **carrito**, **búsqueda de productos**, **categorías din
 
 ## 📷 Capturas de pantalla
 
-![PIZZA POP](img/image1.png)
+![PIZZA POP](image/image1.png)
 <br></br>
-![PIZZA POP](img/image2.png)
+![PIZZA POP](image/image2.png)
 <br></br>
-![PIZZA POP](img/image3.png)
+![PIZZA POP](image/image3.png)
 
 ## No olvides darle ⭐ a este repositorio si te gustó.
 
