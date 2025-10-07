@@ -1587,7 +1587,7 @@ function sendWhatsAppOrder() {
     }
 
     // Abrir WhatsApp
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
     
     // Cerrar modal y mostrar confirmación
     closeOrderModal();
@@ -1641,3 +1641,4 @@ document.addEventListener("DOMContentLoaded", () => {
 </script> 
 </body>
 </html>
+
