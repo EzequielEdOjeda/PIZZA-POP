@@ -1563,27 +1563,34 @@ function sendWhatsAppOrder() {
     
     const whatsappNumber = "543624031997";
     
-    let message = "Hola, mi pedido es el siguiente:%0A%0A";
+    // 1. Encabezado del Ticket
+    let message = "==================================%0A";
+    message += "*🍕 MI PEDIDO PARA PIZZA POP 🍕*%0A";
+    message += "==================================%0A%0A";
+
+    message += "*📦 DETALLE DE LA ORDEN:*%0A";
     
-    // Agregar productos
+    // 2. Agregar productos
     cart.forEach(item => {
         const itemTotal = (item.price * item.qty).toFixed(2);
-        message += `• ${item.name} x${item.qty} ($${itemTotal})%0A`;
+        // Formato: [Nombre] x[Cantidad] -> Total
+        message += `• ${item.name} x${item.qty} -> $${itemTotal}%0A`;
     });
     
-    // Total
+    // 3. Separador y Total Final
     const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-    message += `%0A*Total: $${total.toFixed(2)}*%0A%0A`;
+    message += `%0A----------------------------------%0A`;
+    message += `💰 *TOTAL A PAGAR: $${total.toFixed(2)}*%0A`;
+    message += `----------------------------------%0A%0A`;
     
-    // Datos de entrega y pago
-    message += `---%0A`; 
-    message += `*DATOS DEL CLIENTE:*%0A`;
-    message += `👤 *Nombre:* ${name}%0A`;
-    message += `📍 *Dirección/Ubicación:* ${address}%0A`;
-    message += `💳 *Tipo de Pago:* ${finalPaymentMethod}%0A`; 
+    // 4. Datos del Cliente
+    message += "*DATOS DE ENTREGA Y PAGO:*%0A";
+    message += `👤 Nombre: ${name}%0A`;
+    message += `📍 Dirección/Ubicación: ${address}%0A`;
+    message += `💳 Tipo de Pago: ${finalPaymentMethod}%0A`; 
     
     if (notes) {
-        message += `📝 *Notas:* ${notes}%0A`;
+        message += `📝 Notas: ${notes}%0A`;
     }
 
     // Abrir WhatsApp
@@ -1641,4 +1648,5 @@ document.addEventListener("DOMContentLoaded", () => {
 </script> 
 </body>
 </html>
+
 
