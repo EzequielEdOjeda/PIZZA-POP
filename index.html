@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -17,6 +17,8 @@
     --text:#333;
     --text-light:#fff;
     --hover:#c73850;
+    --added-color: #28a745; /* Color para el estado 'Agregado' */
+    --loading-color: #ffc107; /* Color para el estado 'Cargando/Esperando' */
 }
 
 body{
@@ -115,8 +117,19 @@ main{display:grid; grid-template-columns:1fr; gap:20px; padding:0 20px 20px 20px
 .product-card p{color: #666; margin-bottom: 15px; font-size: 14px;}
 .product-card .price{font-size: 1.5em; color: var(--primary); font-weight: bold; display: block; margin-bottom: 10px;}
 
-.product-card button{margin-top:10px; padding:10px; width:100%; border:none; background: var(--primary); color: var(--text-light); border-radius:8px; font-weight:bold; cursor:pointer; transition:0.3s; font-size: 16px;}
+.product-card button{margin-top:10px; padding:10px; width:100%; border:none; background: var(--primary); color: var(--text-light); border-radius:8px; font-weight:bold; cursor:pointer; transition:background 0.3s, transform 0.3s; font-size: 16px;}
 .product-card button:hover{background: var(--hover);}
+/* 1. ESTILOS AÑADIDOS: Estado del botón */
+.product-card button.added {
+    background: var(--added-color) !important;
+    transform: scale(1.05);
+}
+.product-card button.loading {
+    background: var(--loading-color) !important;
+    color: var(--text) !important;
+    cursor: default;
+}
+
 
 /* Carrito (Sidebar) */
 #cart{
@@ -133,7 +146,7 @@ main{display:grid; grid-template-columns:1fr; gap:20px; padding:0 20px 20px 20px
     overflow-y: auto;
     box-shadow: -5px 0 15px rgba(0,0,0,0.5);
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out, opacity 0.5s ease;
     z-index: 9999;
 }
 #cart.show{transform: translateX(0);}
@@ -223,9 +236,13 @@ main{display:grid; grid-template-columns:1fr; gap:20px; padding:0 20px 20px 20px
     cursor: pointer;
     font-weight: bold;
 }
+/* 4. ESTILOS AÑADIDOS: Botón de eliminar en carrito (diseño) */
 .quantity-controls .remove-btn{
     background: #dc3545;
     font-size: 14px;
+    width: 30px; /* Tamaño un poco más grande para el icono */
+    height: 30px;
+    border-radius: 6px; /* Forma rectangular/suave */
 }
 .quantity-controls button:hover{opacity: 0.8;}
 
@@ -362,7 +379,8 @@ main{display:grid; grid-template-columns:1fr; gap:20px; padding:0 20px 20px 20px
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select { /* Añadido select */
     width: 100%;
     padding: 12px;
     border: 2px solid #e0e0e0;
@@ -374,7 +392,8 @@ main{display:grid; grid-template-columns:1fr; gap:20px; padding:0 20px 20px 20px
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
     outline: none;
     border-color: var(--primary);
 }
@@ -383,6 +402,13 @@ main{display:grid; grid-template-columns:1fr; gap:20px; padding:0 20px 20px 20px
     resize: vertical;
     min-height: 60px;
 }
+
+/* 3. ESTILOS AÑADIDOS: Ocultar campo de 'Otros Pago' por defecto */
+#otherPaymentInput {
+    display: none;
+    margin-top: 10px;
+}
+
 
 .modal-submit {
     width: 100%;
@@ -517,13 +543,18 @@ footer {
         font-size: 10vw; 
     }
 	
+	/* 2. ESTILOS AÑADIDOS: Carrito en móvil con 100% de alto y ancho */
 	#cart{
-	max-height: 100vh; /* Altura máxima (punto de partida) */
-	max-width: 90%;
+	max-height: 100vh; 
+	max-width: 100%; /* Ajustar para que cubra todo el ancho */
+	width: 90%;
+	transition: transform 0.3s ease-in-out, opacity 0.5s ease;
+    z-index: 9999;
 	}
-
+	
+    /* 2. ESTILOS AÑADIDOS: Altura de items del carrito en móvil */
     #cartItems{
-    max-height: 30vh; /* Altura máxima (punto de partida) */
+    max-height: 50vh; 
 	}
 	
     /* Layout principal en móvil */
@@ -547,19 +578,36 @@ footer {
         font-size: 20px;
     }
     .form-group input,
-    .form-group textarea {
+    .form-group textarea,
+    .form-group select {
         font-size: 16px;
     }
     
-    /* Notificación en móvil */
-    .notification {
-        top: 70px;
-        right: 10px;
-        left: 10px;
-        text-align: center;
-        font-size: 14px;
-        padding: 12px 15px;
-    }
+    /* Notificaciones (Base: Móvil) */
+.notification {
+    position: fixed;
+    /* Las siguientes 4 líneas centran horizontalmente en móvil: */
+    top: 70px; /* Un poco más abajo que en el diseño anterior */
+    right: 10px;
+    left: 10px;
+    text-align: center;
+    /* ... (resto de estilos) ... */
+    background: #28a745;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 10000;
+    opacity: 0;
+    
+    /* Animación ajustada para el centrado móvil */
+    transform: translateY(-50px); /* Sale desde arriba */
+    transition: all 0.3s ease;
+}
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
     
     /* Footer en móvil */
     .footer-info {
@@ -636,7 +684,7 @@ footer {
 }
 
 .pagination-controls button {
-    padding: 10px 20px;
+    padding: 10px 15px;
     border: none;
     background: var(--primary);
     color: var(--text-light);
@@ -660,7 +708,27 @@ footer {
 
 /* --- MEDIA QUERY: DESKTOP (min-width: 769px) --- */
 @media screen and (min-width: 769px) {
+    /* 🔔 ESTILO AÑADIDO: Notificación en Desktop */
+    .notification {
+        /* Deshace el centrado de móvil */
+        left: auto;
+        top: auto; 
+        
+        /* Fija la posición en la esquina inferior derecha */
+        right: 20px;
+        bottom: 20px; 
+        
+        /* Reset de estilos de texto para desktop */
+        text-align: left;
+        max-width: 350px;
+        
+        /* Ajuste de animación: Entra desde abajo */
+        transform: translateY(100px); 
+    }
     
+    .notification.show {
+        transform: translateY(0);
+    }
     /* Header: Ajustar layout para el buscador */
     header {
         justify-content: space-between; /* Volver al justify original */
@@ -705,7 +773,28 @@ footer {
     .mobile-search-area {
         display: block;
     }
+    /* Modal en móvil */
+    .modal-overlay {
+        /* Asegura que la superposición no tenga padding que lo separe de los bordes */
+        padding: 0; 
+        /* En móvil, queremos que se pegue al fondo si el contenido es largo */
+        align-items: flex-end; /* Lo empuja hacia la parte inferior de la pantalla */
+    }
 
+    .modal-content {
+        /* 1. ELIMINAR BORDES REDONDEADOS */
+        border-radius: 0 0 0 0; /* Mantiene esquinas superiores redondeadas, elimina las inferiores */
+        
+        /* 2. OCUPAR TODO EL ANCHO */
+        width: 100%; /* Ocupa el 100% del ancho del viewport */
+        max-width: 100%; /* Asegura que no haya límite */
+        
+        /* 3. MEJOR VISUALIZACIÓN EN PANTALLAS PEQUEÑAS */
+        padding: 20px 20px 40px 20px; /* Aumentar el padding inferior para espacio sobre la barra de inicio de iOS/Android */
+        
+        /* Asegura que el contenido pueda scrollear dentro del modal si es muy largo */
+        max-height: 90vh;
+    }
 }
 </style>
 </head>
@@ -732,14 +821,15 @@ footer {
 
 <section class="banner">
     <h1>🍕 PIZZA POP</h1>
-    <img src="https://picsum.photos/1200/300?pizza-banner-pizza-pop" alt="Banner de Publicidad">
+    <img src="https://picsum.photos/1200/300?pizza-banner-pizza-pop">
 </section>
 
-<section class="menu-controls mobile-search-area"> 
+<section id="searchArea" class="menu-controls mobile-search-area"> 
     <div class="search-container mobile-centered">
         <input type="text" id="productSearchMobile" placeholder="🔍 Buscar pizzas, empanadas, postres, etc." aria-label="Buscar productos">
     </div>
 </section>
+
 <nav id="categoriesNav" class="categories">
     <button data-cat="Todas" class="cat-btn active">Todas</button>
 </nav>
@@ -747,7 +837,7 @@ footer {
 <main>
        
     <section id="menu" class="menu-section">
-        <p class="loading-message">Cargando productos...</p>
+        <p class="loading-message">Cargando el menú...</p>
     </section>
     
     <aside id="cart">
@@ -784,7 +874,7 @@ footer {
             
             <div class="footer-section">
     <h3>Dónde Estamos</h3>
-    <p><i class="fas fa-map-marker-alt"></i> French 662 - Resistencia, Chaco</p>
+    <p><i class="fas fa-map-marker-alt"></i> Rivadavia 128 - Resistencia, Chaco</p>
 	<p><i class="fas fa-clock"></i> Lun - Dom: 19:00 - 00:00</p>
      </div>
 
@@ -825,7 +915,7 @@ let cartOpen = false;
 
 // === NUEVAS VARIABLES DE PAGINACIÓN Y BÚSQUEDA ===
 let currentPage = 1;
-const itemsPerPage = 6; // Mostrar 6 productos por página
+const itemsPerPage = 9; // Mostrar 6 productos por página
 let searchTerm = "";
 // =================================================
 
@@ -843,12 +933,76 @@ const productSearchMobile = document.getElementById("productSearchMobile");
 const paginationControls = document.getElementById("paginationControls");
 // ======================
 
+// 1. Array para gestionar el estado de los botones (ID del producto y Timeout)
+const buttonTimeouts = {};
+
+// ... (Toda la configuración, variables y funciones previas) ...
+
+// ===== NUEVA VARIABLE PARA EL EFECTO DE FADE (Desktop only) =====
+let footerElement = null; // Será cargado al inicio
+// =================================================================
+
+// ==============================================
+//           FADING CART EFFECT (DESKTOP ONLY)
+// ==============================================
+
+/**
+ * Controla la opacidad del carrito en modo escritorio
+ * basándose en la proximidad del footer.
+ */
+function handleCartFade() {
+    const DESKTOP_WIDTH = 768; 
+    // Distancia en píxeles antes del footer donde comienza el desvanecimiento.
+    const FADE_DISTANCE = 40; 
+    
+    // 1. Aplicar solo en modo escritorio
+    if (window.innerWidth <= DESKTOP_WIDTH) {
+        // Si está en móvil, asegurar opacidad completa y salir
+        if (cartPanel) cartPanel.style.opacity = 1; 
+        return;
+    }
+
+    // Cargar la referencia del footer una vez
+    if (!footerElement) {
+        footerElement = document.querySelector('footer');
+        if (!footerElement || !cartPanel) return; 
+    }
+    
+    // Posición superior del footer (donde comienza)
+    const footerTop = footerElement.getBoundingClientRect().top + window.scrollY;
+
+    // Posición inferior actual de la ventana de visualización (viewport)
+    const viewportBottom = window.scrollY + window.innerHeight;
+    
+    // Distancia restante desde la parte inferior de la pantalla hasta el footer
+    const distanceToFooter = footerTop - viewportBottom; 
+    
+    let opacity;
+
+    if (distanceToFooter > FADE_DISTANCE) {
+        // Caso 1: Lejos del footer, opacidad completa.
+        opacity = 1;
+    } else if (distanceToFooter <= 0) {
+        // Caso 2: El footer está totalmente visible o por encima, opacidad mínima (desvanecido)
+        opacity = 0; 
+    } else {
+        // Caso 3: En la zona de desvanecimiento (0 < distanceToFooter <= 500)
+        
+        // La opacidad es proporcional a la distancia normalizada (500px = 1, 0px = 0)
+        const normalizedDistance = distanceToFooter / FADE_DISTANCE; 
+        
+        opacity = normalizedDistance;
+    }
+    
+    // Aplicar la opacidad al elemento del carrito
+    cartPanel.style.opacity = opacity.toFixed(2);
+}
 // ==============================================
 //           FUNCIÓN DE CARGA (FETCH)
 // ==============================================
 
 async function loadProducts() {
-    menuSection.innerHTML = '<p class="loading-message">Cargando productos...</p>';
+    menuSection.innerHTML = '<p class="loading-message">Cargando el menú...</p>';
     
     try {
         const response = await fetch(FIREBASE_URL);
@@ -979,14 +1133,21 @@ function renderProducts() {
     productsToDisplay.forEach((product) => {
         const card = document.createElement("div");
         card.className = "product-card";
+        
+        // 1. Determinar el estado inicial del botón
+        const buttonState = buttonTimeouts[product.id] ? 'loading' : '';
+        const buttonText = buttonTimeouts[product.id] 
+                            ? '<i class="fas fa-spinner fa-spin"></i> Agregando...' 
+                            : '<i class="fas fa-plus"></i> Agregar al pedido';
+        
         card.innerHTML = `
             <img src="${product.img}" alt="${product.name}" 
                  onerror="this.onerror=null;this.src='https://nftcalendar.io/storage/uploads/2022/02/21/image-not-found_0221202211372462137974b6c1a.png'">
             <h3>${product.name}</h3>
             <p>${product.desc}</p>
             <p class="price">$${product.price.toFixed(2)}</p>
-            <button onclick="addToCart('${product.id}')">
-                <i class="fas fa-plus"></i> Agregar al pedido
+            <button data-product-id="${product.id}" onclick="addToCart(event, '${product.id}')" class="${buttonState}" ${buttonState ? 'disabled' : ''}>
+                ${buttonText}
             </button>
         `;
         menuSection.appendChild(card);
@@ -1007,7 +1168,12 @@ function renderPagination(totalPages) {
     if (totalPages <= 1) {
         return;
     }
-    
+	
+	// Obtener las referencias de los elementos
+    const categoriesNav = document.getElementById('categoriesNav');
+    const searchArea = document.getElementById('searchArea'); // Asegúrate de que el ID esté en el HTML
+    const HEADER_OFFSET = 100;
+
     // Botón Anterior
     const prevButton = document.createElement("button");
     prevButton.id = "prevPageBtn";
@@ -1017,10 +1183,18 @@ function renderPagination(totalPages) {
         if (currentPage > 1) {
             currentPage--;
             renderProducts();
-            window.scrollTo({ top: menuSection.offsetTop - 100, behavior: 'smooth' }); // Scroll al menú
+            
+            // 💥 LÓGICA CONDICIONAL DE SCROLL 💥
+            if (window.innerWidth <= 768 && searchArea) {
+                // Modo Móvil: Desplazar a la barra de búsqueda
+                window.scrollTo({ top: searchArea.offsetTop - HEADER_OFFSET, behavior: 'smooth' }); 
+            } else if (categoriesNav) {
+                // Modo Escritorio: Desplazar a Categorías
+                window.scrollTo({ top: categoriesNav.offsetTop - HEADER_OFFSET, behavior: 'smooth' }); 
+            }
         }
     };
-    
+
     // Botón Siguiente
     const nextButton = document.createElement("button");
     nextButton.id = "nextPageBtn";
@@ -1030,7 +1204,15 @@ function renderPagination(totalPages) {
         if (currentPage < totalPages) {
             currentPage++;
             renderProducts();
-            window.scrollTo({ top: menuSection.offsetTop - 100, behavior: 'smooth' }); // Scroll al menú
+            
+            // 💥 LÓGICA CONDICIONAL DE SCROLL 💥
+            if (window.innerWidth <= 768 && searchArea) {
+                // Modo Móvil: Desplazar a la barra de búsqueda
+                window.scrollTo({ top: searchArea.offsetTop - HEADER_OFFSET, behavior: 'smooth' }); 
+            } else if (categoriesNav) {
+                // Modo Escritorio: Desplazar a Categorías
+                window.scrollTo({ top: categoriesNav.offsetTop - HEADER_OFFSET, behavior: 'smooth' }); 
+            }
         }
     };
     
@@ -1075,20 +1257,26 @@ if (productSearchMobile) {
 }
 
 // ==============================================
-//           GESTIÓN DEL CARRITO 
+//           GESTIÓN DEL CARRITO (SCROLL Y VISUALIZACIÓN)
 // ==============================================
 
 function updateCartUI() {
-    // ... (Mantener el código de updateCartUI) ...
     if (window.innerWidth <= 768) {
         if (cartOpen) {
             cartPanel.classList.add("show");
+            // 2. BLOQUEAR SCROLL
+            document.body.style.overflow = 'hidden'; 
         } else {
             cartPanel.classList.remove("show");
+            // 2. HABILITAR SCROLL
+            document.body.style.overflow = ''; 
         }
     } else {
+        // En desktop, el carrito siempre está "visible" como sidebar
         cartPanel.classList.remove("show");
         cartPanel.style.transform = 'none';
+        // 2. Asegurar scroll habilitado en desktop
+        document.body.style.overflow = '';
     }
 }
 
@@ -1109,7 +1297,15 @@ window.addEventListener("resize", updateCartUI);
 //           FUNCIONES DEL CARRITO 
 // ==============================================
 
-window.addToCart = function(id) {
+// 1. Función modificada para recibir el evento y el ID
+window.addToCart = function(event, id) {
+    const button = event.currentTarget;
+
+    // Prevenir doble click mientras está en transición
+    if (button.classList.contains('loading')) {
+        return;
+    }
+    
     const item = products.find(p => p.id === id);
     
     if (!item) {
@@ -1127,8 +1323,42 @@ window.addToCart = function(id) {
     
     renderCart();
     
-    // Feedback visual
-    showNotification(`✓ ${item.name} agregado al pedido`);
+    // 1. Feedback visual: "Agregando..."
+    button.classList.remove('added'); // Asegurar limpieza
+    button.classList.add('loading');
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Agregando...';
+
+    // 1. Primer timeout (600ms): Transición de 'Agregando...' a 'Agregado'
+    const timeout1 = setTimeout(() => {
+        // *******************************************************************
+        // 2. SEGUNDO ESTADO: CONFIRMACIÓN (AGREGADO)
+        // *******************************************************************
+        button.classList.remove('loading');
+        button.classList.add('added');
+        button.innerHTML = '<i class="fas fa-check"></i> Agregado';
+        
+        // 1. Segundo timeout (1000ms): Transición de 'Agregado' a 'Original'
+        const timeout2 = setTimeout(() => {
+            // *******************************************************************
+            // 3. TERCER ESTADO: ESTADO ORIGINAL
+            // *******************************************************************
+            button.classList.remove('added');
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-plus"></i> Agregar al pedido';
+            delete buttonTimeouts[id];
+        }, 1000); // Duración del estado "Agregado"
+	// Feedback visual (notificación)
+    showNotification(`✓ ${item.name}`);
+        
+        // Guardar la referencia del segundo timeout
+        buttonTimeouts[id] = timeout2; 
+    }, 600); // Duración del estado "Agregando..."
+
+    // Guardar la referencia del primer timeout (aunque el segundo es el que realmente limpia)
+    buttonTimeouts[id] = timeout1; 
+    
+    
 }
 
 function renderCart() {
@@ -1157,7 +1387,7 @@ function renderCart() {
                 <button onclick="decreaseQty(${index})">−</button>
                 <span style="margin: 0 8px; font-weight:bold;">${item.qty}</span>
                 <button onclick="increaseQty(${index})">+</button>
-                <button class="remove-btn" onclick="removeCart(${index})">✖</button>
+                <button class="remove-btn" onclick="removeCart(${index})"><i class="fas fa-trash-alt"></i></button>
             </div>
         `;
         cartItems.appendChild(li);
@@ -1187,6 +1417,7 @@ window.decreaseQty = function(index) {
 
 window.removeCart = function(index) {
     if (cart[index]) {
+        // En un escenario real, aquí se preguntaría confirmación
         cart.splice(index, 1);
         renderCart();
     }
@@ -1198,12 +1429,12 @@ function updateCartCount() {
 }
 
 // ==============================================
-//           ENVÍO POR WHATSAPP 
+//           ENVÍO POR WHATSAPP (MODAL MEJORADO)
 // ==============================================
 
 document.getElementById("sendWhatsApp").addEventListener("click", () => {
     if (cart.length === 0) {
-        showNotification("⚠️ Agrega productos al carrito primero");
+        showNotification("⚠️ Agrega productos al carrito");
         return;
     }
     
@@ -1228,6 +1459,15 @@ function showOrderModal() {
                     <input type="text" id="deliveryAddress" placeholder="Ej: Av. Sarmiento 123" required>
                 </div>
                 <div class="form-group">
+                    <label for="paymentMethod">💳 Tipo de Pago *</label>
+                    <select id="paymentMethod" required>
+                        <option value="Efectivo" selected>Efectivo</option>
+                        <option value="Tarjeta de Crédito/Débito">Tarjeta de Crédito/Débito</option>
+                        <option value="Otros">Otros (Especificar)</option>
+                    </select>
+                    <input type="text" id="otherPaymentInput" placeholder="Ej: Mercado Pago, Transferencia" required>
+                </div>
+                <div class="form-group">
                     <label for="additionalNotes">📝 Notas adicionales (opcional)</label>
                     <textarea id="additionalNotes" placeholder="Ej: Timbre roto, llamar al celular" rows="2"></textarea>
                 </div>
@@ -1239,7 +1479,7 @@ function showOrderModal() {
     `;
     document.body.appendChild(modal);
     
-    // Prevenir scroll del body
+    // 2. Prevenir scroll del body mientras el modal está abierto
     document.body.style.overflow = 'hidden';
     
     // Animar entrada
@@ -1247,6 +1487,30 @@ function showOrderModal() {
     
     // Focus en el primer campo
     setTimeout(() => document.getElementById("customerName").focus(), 300);
+    
+    // 3. Manejar cambio en el selector de pago
+    const paymentMethodSelect = document.getElementById("paymentMethod");
+    const otherPaymentInput = document.getElementById("otherPaymentInput");
+    
+    // 📢 ESTE BLOQUE ES LA CLAVE: Limpiar y asegurar estado inicial
+    otherPaymentInput.style.display = 'none';
+    otherPaymentInput.removeAttribute('required');
+    otherPaymentInput.value = ''; // Limpiamos el valor por si quedó algo de una sesión anterior
+    // -----------------------------------------------------------
+    
+    paymentMethodSelect.addEventListener("change", (e) => {
+        if (e.target.value === "Otros") {
+            otherPaymentInput.style.display = 'block';
+            otherPaymentInput.focus();
+            // 📝 Agregamos el atributo 'required' SOLO cuando se selecciona 'Otros'
+            otherPaymentInput.setAttribute('required', 'required'); 
+        } else {
+            otherPaymentInput.style.display = 'none';
+            // 📝 Eliminamos el atributo 'required' cuando se selecciona cualquier otra cosa
+            otherPaymentInput.removeAttribute('required');
+            otherPaymentInput.value = ''; // Limpiar el valor
+        }
+    });
     
     // Manejar envío del formulario
     document.getElementById("orderForm").addEventListener("submit", (e) => {
@@ -1266,6 +1530,7 @@ window.closeOrderModal = function() {
     const modal = document.querySelector(".modal-overlay");
     if (modal) {
         modal.classList.remove("show");
+        // 2. Restablecer scroll
         document.body.style.overflow = '';
         setTimeout(() => modal.remove(), 300);
     }
@@ -1274,44 +1539,66 @@ window.closeOrderModal = function() {
 function sendWhatsAppOrder() {
     const name = document.getElementById("customerName").value.trim();
     const address = document.getElementById("deliveryAddress").value.trim();
+    const paymentMethod = document.getElementById("paymentMethod").value;
+    const otherPayment = document.getElementById("otherPaymentInput").value.trim();
     const notes = document.getElementById("additionalNotes").value.trim();
     
+    // VALIDACIÓN ESENCIAL: Asegurar que Nombre y Dirección están llenos.
     if (!name || !address) {
-        showNotification("⚠️ Por favor completa todos los campos obligatorios");
-        return;
+        showNotification("⚠️ Por favor completa tu nombre y dirección, son campos obligatorios.");
+        return; 
     }
     
+    // 1. Manejo del tipo de pago 'Otros'
+    let finalPaymentMethod = paymentMethod;
+
+    if (paymentMethod === "Otros") {
+        if (!otherPayment) {
+            showNotification("⚠️ Seleccionaste 'Otros'. Por favor, especifica el método de pago.");
+            return; // Detiene el envío si el campo 'Otros' está vacío
+        }
+        finalPaymentMethod = otherPayment; // Usa el texto escrito
+    }
+    // Si paymentMethod es "Efectivo" o "Tarjeta", finalPaymentMethod ya contiene ese valor.
+    
     const whatsappNumber = "543624031997";
+    
     let message = "Hola, mi pedido es el siguiente:%0A%0A";
     
     // Agregar productos
     cart.forEach(item => {
         const itemTotal = (item.price * item.qty).toFixed(2);
-        message += `• ${item.name} x${item.qty} - ${itemTotal}%0A`;
+        message += `• ${item.name} x${item.qty} ($${itemTotal})%0A`;
     });
     
     // Total
     const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     message += `%0A*Total: $${total.toFixed(2)}*%0A%0A`;
     
-    // Datos de entrega
+    // Datos de entrega y pago
+    message += `---%0A`; 
+    message += `*DATOS DEL CLIENTE:*%0A`;
     message += `👤 *Nombre:* ${name}%0A`;
-    message += `📍 *Dirección:* ${address}%0A`;
+    message += `📍 *Dirección/Ubicación:* ${address}%0A`;
+    message += `💳 *Tipo de Pago:* ${finalPaymentMethod}%0A`; 
     
     if (notes) {
         message += `📝 *Notas:* ${notes}%0A`;
     }
-    
+
     // Abrir WhatsApp
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
     
     // Cerrar modal y mostrar confirmación
     closeOrderModal();
-    showNotification("✓ Pedido enviado a WhatsApp");
-    
+    showNotification("✓ Pedido enviado por WhatsApp");
+	
     // Opcional: limpiar carrito después de enviar
-    // cart = [];
-    // renderCart();
+     cart = [];
+     renderCart();
+	 // 2. CERRAR PESTAÑA DEL CARRITO (si está abierta)
+    cartOpen = false;
+    updateCartUI();
 }
 
 // ==============================================
@@ -1343,6 +1630,13 @@ function showNotification(message) {
 document.addEventListener("DOMContentLoaded", () => {
     updateCartUI();
     loadProducts();
+    
+    // 🔔 Listeners para el efecto de desvanecimiento (¡NUEVO!)
+    window.addEventListener('scroll', handleCartFade);
+    window.addEventListener('resize', handleCartFade);
+    
+    // Ejecutar al cargar para establecer el estado inicial
+    handleCartFade(); 
 });
 </script> 
 </body>
